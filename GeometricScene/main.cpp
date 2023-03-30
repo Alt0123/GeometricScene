@@ -404,18 +404,17 @@ std::istream& operator >> (std::istream &in, Ellipse &el)
 class GeometricScene {
 private:
     std::vector<std::shared_ptr<SceneElement>> items;
-    size_t size;
-public:
+    int index { 0 };
     
+public:
     void AddItem(SceneElement& it)
     {
         items.push_back(std::shared_ptr<SceneElement>(&it));
-        size++;
     }
     
     void Write(std::ostream& out) const
     {
-        out << size << std::endl;
+        out << items.size() << std::endl;
         for (auto it : items)
         {
             it->Write(out);
@@ -425,20 +424,19 @@ public:
     
     void Read (std::istream& in)
     {
-        int id, size;
+        int size { 0 };
         in >> size;
         for (int i = 0; i < size; ++i)
         {
-            id = ReadItemID(in);
-            ReadItemBody(in, static_cast<SceneTypeId>(id));
+            ReadItemBody(in, ReadItemID(in));
         }
     }
     
-    int ReadItemID(std::istream& in)
+    SceneTypeId ReadItemID(std::istream& in)
     {
         int id;
         in >> id;
-        return id;
+        return static_cast<SceneTypeId>(id);
     }
     
     void ReadItemBody(std::istream& in, SceneTypeId id)
@@ -447,6 +445,7 @@ public:
         Line l;
         Polyline pl;
         Ellipse el;
+        
         switch (id)
         {
             case SceneTypeId::Point:
@@ -473,6 +472,45 @@ public:
                 break;
         }
     }
+    
+    //Итератор
+    std::shared_ptr<SceneElement> Iterator()
+    {
+        if (!items.empty())
+        {
+            return items[index];
+        }
+        
+        return nullptr;
+    }
+    
+    bool First()
+    {
+        if (items.empty())
+        {
+            return false;
+        }
+        
+        index = 0;
+        return true;
+    }
+    
+    bool Next()
+    {
+        if (IsDone())
+        {
+            return true;
+        }
+        
+        index++;
+        return false;
+    }
+        
+    bool IsDone()
+    {
+        return index == items.size();
+    }
+    
 };
 
 
@@ -490,17 +528,24 @@ int main(int argc, char* argv[])
     s.AddItem(* new Polyline(pl));
     s.AddItem(* new Ellipse(el));
     
-    std::stringstream ss;
-    s.Write(ss);
-    s.Write(std::cout);
+    
+    
+    for (s.First(); !s.IsDone(); s.Next())
+    {
+        s.Iterator()->Write(std::cout);
+        std::cout << std::endl;
+    }
+    
+//    std::stringstream ss;
+//    s.Write(std::cout);
+//    s.Write(std::cout);
+//    std::cout << std::endl;
+//
+//    GeometricScene s1;
+//    s1.Read(ss);
+//    s1.Write(std::cout);
     std::cout << std::endl;
     
-    GeometricScene s1;
-    s1.Read(ss);
-    s1.Write(std::cout);
-    
-    //std::cout << ss.str() << std::endl;
-    std::cout << std::endl;
     return 0;
 }
 
