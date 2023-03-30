@@ -19,6 +19,8 @@ public:
     
     virtual void Read (std::istream&) = 0;
     
+    virtual void ReadForScene (std::istream&) = 0;
+    
     virtual SceneTypeId TypeId() const = 0;
     
     virtual ~SceneElement() = default;
@@ -85,6 +87,11 @@ public:
     void Read (std::istream& in) override
     {
         in >> *this;
+    }
+    
+    void ReadForScene (std::istream& in) override
+    {
+        in >> x >> y;
     }
     
     bool operator == (const Point& to) const
@@ -199,6 +206,11 @@ public:
         in >> *this;
     }
     
+    void ReadForScene (std::istream& in) override
+    {
+        in >> start >> end;
+    }
+    
     friend std::ostream& operator << (std::ostream &out, const Line &line);
     
     friend std::istream& operator >> (std::istream &in, Line &line);
@@ -271,6 +283,18 @@ public:
         in >> *this;
     }
     
+    void ReadForScene (std::istream& in) override
+    {
+        int size = 0;
+        Point p;
+        in >> size;
+        for (int i = 0; i < size; ++i)
+        {
+            in >> p;
+            points.push_back(p);
+        }
+    }
+    
     friend std::ostream& operator << (std::ostream &out, const Polyline &pl);
     
     friend std::istream& operator >> (std::istream &in, Polyline &pl);
@@ -290,7 +314,7 @@ std::ostream& operator << (std::ostream &out, const Polyline &pl)
 std::istream& operator >> (std::istream &in, Polyline &pl)
 {
     char id;
-    int size;
+    int size = 0;
     Point p;
     in >> id;
     in >> size;
@@ -353,6 +377,11 @@ public:
         in >> *this;
     }
     
+    void ReadForScene (std::istream& in) override
+    {
+        in >> c >> a >> b;
+    }
+    
     friend std::istream& operator >> (std::istream &in, Ellipse &el);
     
     friend std::ostream& operator << (std::ostream &out, const Ellipse &el);
@@ -371,53 +400,77 @@ std::istream& operator >> (std::istream &in, Ellipse &el)
     return in;
 }
 
+
 class GeometricScene {
 private:
     std::vector<std::shared_ptr<SceneElement>> items;
-    
+    size_t size;
 public:
     
     void AddItem(SceneElement& it)
     {
         items.push_back(std::shared_ptr<SceneElement>(&it));
+        size++;
     }
     
     void Write(std::ostream& out) const
     {
-        out << items.size() << ' ';
-        for (int i = 0; i < items.size(); ++i)
+        out << size << std::endl;
+        for (auto it : items)
         {
-            items[i]->Write(out);
+            it->Write(out);
+            out << std::endl;
         }
     }
     
     void Read (std::istream& in)
     {
-        int size, a;
-        SceneTypeId id;
+        int id, size;
         in >> size;
-        
         for (int i = 0; i < size; ++i)
         {
-            in >> a;
-            id = static_cast<SceneTypeId>(a);
-            
-            switch (id) {
-                case SceneTypeId::Point:
-                    
-                    break;
-                case SceneTypeId::Line:
-                    
-                    break;
-                case SceneTypeId::Ellipse:
-                    
-                    break;
-                case SceneTypeId::Polyline:
-                    
-                    break;
-                default:
-                    break;
-            }
+            id = ReadItemID(in);
+            ReadItemBody(in, static_cast<SceneTypeId>(id));
+        }
+    }
+    
+    int ReadItemID(std::istream& in)
+    {
+        int id;
+        in >> id;
+        return id;
+    }
+    
+    void ReadItemBody(std::istream& in, SceneTypeId id)
+    {
+        Point p;
+        Line l;
+        Polyline pl;
+        Ellipse el;
+        switch (id)
+        {
+            case SceneTypeId::Point:
+                p.ReadForScene(in);
+                AddItem(* new Point(p));
+                break;
+                
+            case SceneTypeId::Line:
+                l.ReadForScene(in);
+                AddItem(* new Line(l));
+                break;
+                
+            case SceneTypeId::Ellipse:
+                el.ReadForScene(in);
+                AddItem(* new Ellipse(el));
+                break;
+                
+            case SceneTypeId::Polyline:
+                pl.ReadForScene(in);
+                AddItem(* new Polyline(pl));
+                break;
+                
+            default:
+                break;
         }
     }
 };
@@ -442,12 +495,12 @@ int main(int argc, char* argv[])
     s.Write(std::cout);
     std::cout << std::endl;
     
-//    GeometricScene s1;
-//    s1.Read(ss);
-//    s1.Write(std::cout);
+    GeometricScene s1;
+    s1.Read(ss);
+    s1.Write(std::cout);
     
     //std::cout << ss.str() << std::endl;
-    //std::cout << std::endl;
+    std::cout << std::endl;
     return 0;
 }
 
