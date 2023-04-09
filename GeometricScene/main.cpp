@@ -2,7 +2,7 @@
 #include <cmath>
 #include <vector>
 #include <sstream>
-
+#include <stdint.h>
 
 enum class SceneTypeId
 {
@@ -31,21 +31,30 @@ class Point : public SceneElement {
 private:
     double x;
     double y;
-    
+    uint32_t color;
 public:
     Point()
     : x(0.0)
     , y(0.0)
+    , color(0x0000FF)
     {};
 
     Point(const Point& a)
     : x(a.x)
     , y(a.y)
+    , color(a.color)
     {};
 
+    Point(float a, float b, uint32_t c)
+    : x(a)
+    , y(b)
+    , color(c)
+    {};
+    
     Point(float a, float b)
     : x(a)
     , y(b)
+    , color(0x0000FF)
     {};
     
     void Scale(float n)
@@ -79,7 +88,7 @@ public:
         y = _y;
     }
     
-    void Write(std::ostream& out) const override
+    void Write (std::ostream& out) const override
     {
         out << *this;
     }
@@ -111,7 +120,7 @@ public:
 
     Point operator * (const double& n) const
     {
-        return Point(x * n, y * n);
+        return Point (x * n, y * n);
     }
     
     friend std::ostream& operator << (std::ostream &out, const Point &point);
@@ -121,14 +130,14 @@ public:
 
 std::ostream& operator << (std::ostream &out, const Point &point)
 {
-    out << static_cast<int>(point.TypeId()) << " " << point.x << " " << point.y << " " ;
+    out << static_cast<int>(point.TypeId()) << " " << point.x << " " << point.y << " ";
     return out;
 }
 
 std::istream& operator >> (std::istream &in, Point &point)
 {
-    char id;
-    in >> id >> point.x >> point.y;
+    in.ignore(2);
+    in >> point.x >> point.y;
     return in;
 }
 
@@ -147,6 +156,7 @@ class Line : public Curve {
 private:
     Point start;
     Point end;
+    uint32_t color;
     
 public:
     Line()
@@ -156,9 +166,10 @@ public:
 
     Line(const Line& a) = default;
 
-    Line(Point a, Point b)
+    Line(Point a, Point b, uint32_t c)
     : start(a)
     , end(b)
+    , color(c)
     {};
     
     SceneTypeId TypeId () const override
@@ -224,8 +235,8 @@ std::ostream& operator << (std::ostream &out, const Line &line)
 
 std::istream& operator >> (std::istream &in, Line &line)
 {
-    char id;
-    in >> id >> line.start >> line.end;
+    in.ignore(2);
+    in >> line.start >> line.end;
     return in;
 }
 
@@ -233,7 +244,8 @@ std::istream& operator >> (std::istream &in, Line &line)
 class Polyline : public Curve {
 private:
     std::vector<Point> points;
-
+    uint32_t color;
+    
 public:
     Polyline()
     : points()
@@ -241,8 +253,9 @@ public:
 
     Polyline(const Polyline& p) = default;
 
-    Polyline(std::vector<Point> p)
+    Polyline(std::vector<Point> p, uint32_t c)
     : points(p)
+    , color(c)
     {};
 
     SceneTypeId TypeId () const override
@@ -286,6 +299,7 @@ public:
     void ReadForScene (std::istream& in) override
     {
         int size = 0;
+        char skip;
         Point p;
         in >> size;
         for (int i = 0; i < size; ++i)
@@ -313,10 +327,9 @@ std::ostream& operator << (std::ostream &out, const Polyline &pl)
 
 std::istream& operator >> (std::istream &in, Polyline &pl)
 {
-    char id;
     int size = 0;
     Point p;
-    in >> id;
+    in.ignore(2);
     in >> size;
     for (int i = 0; i < size; ++i)
     {
@@ -331,20 +344,23 @@ class Ellipse : public Curve {
 private:
     Point c;
     double a, b;
-
+    uint32_t color;
+    
 public:
     Ellipse()
     : c()
     , a()
     , b()
+    , color()
     {};
 
     Ellipse(const Ellipse& el) = default;
 
-    Ellipse(Point _c, double _a, double _b)
+    Ellipse(Point _c, double _a, double _b, uint32_t c)
     : c(_c)
     , a(_a)
     , b(_b)
+    , color(c)
     {};
 
     SceneTypeId TypeId () const override
@@ -395,8 +411,8 @@ std::ostream& operator << (std::ostream &out, const Ellipse &el)
 
 std::istream& operator >> (std::istream &in, Ellipse &el)
 {
-    char id;
-    in >> id >> el.c >> el.a >> el.b;
+    in.ignore(2);
+    in >> el.c >> el.a >> el.b;
     return in;
 }
 
@@ -516,34 +532,34 @@ public:
 
 int main(int argc, char* argv[])
 {
-    Point p (10, 10);
-    Line l (Point(20, 10), Point(30, 50));
-    Polyline pl (std::vector<Point>{ Point(20, 10), Point(30, 50), Point(30, 60) });
-    Ellipse el (Point(10, 20), 11, 25);
+    Point p (10, 10, 0x808000);
+    Line l (Point(20, 10), Point(30, 50), 0x0000FF);
+    Polyline pl (std::vector<Point>{ Point(20, 10), Point(30, 50), Point(30, 60) }, 0x00FF00);
+    Ellipse el (Point(10, 20), 11, 25, 0x808000);
     
     GeometricScene s;
+    
     
     s.AddItem(* new Point(p));
     s.AddItem(* new Line(l));
     s.AddItem(* new Polyline(pl));
     s.AddItem(* new Ellipse(el));
-    
-    
-    
-    for (s.First(); !s.IsDone(); s.Next())
-    {
-        s.Iterator()->Write(std::cout);
-        std::cout << std::endl;
-    }
-    
-//    std::stringstream ss;
-//    s.Write(std::cout);
-//    s.Write(std::cout);
-//    std::cout << std::endl;
 //
-//    GeometricScene s1;
-//    s1.Read(ss);
-//    s1.Write(std::cout);
+//    for (s.First(); !s.IsDone(); s.Next())
+//    {
+//        s.Iterator()->Write(std::cout);
+//        std::cout << std::endl;
+//    }
+    
+    std::stringstream ss;
+    s.Write(std::cout);
+    s.Write(ss);
+    std::cout << std::endl;
+    std::cout << ss.str() << std::endl;
+    
+    GeometricScene s1;
+    s1.Read(ss);
+    s1.Write(std::cout);
     std::cout << std::endl;
     
     return 0;
