@@ -630,12 +630,14 @@ struct LengthSumVisitor : public Visitor
     
     void Visit(Ellipse &el) override
     {
-        Point p;
-        const double delta_t = el.GetTmax() - el.GetTmin() / 100;
+        Point p1;
+        Point p2;
+        const double delta_t = (el.GetTmax() - el.GetTmin()) / 100;
         for(double t = el.GetTmin(); t < el.GetTmax(); t += delta_t)
         {
-            p = el.CalcFormula(t);
-            total_length += std::hypot(p.GetX() - (p.GetX() + delta_t), p.GetY() - (p.GetY() + delta_t));
+            p1 = el.CalcFormula(t);
+            p2 = el.CalcFormula(t + delta_t);
+            total_length += std::hypot(p1.GetX() - p2.GetX(), p1.GetY() - p2.GetY());
         }
     }
     
@@ -655,14 +657,14 @@ int main(int argc, char* argv[])
     Point p (10, 10, 0x808000);
     Line l (Point(20, 10), Point(30, 50), 0x0000FF);
     Polyline pl (std::vector<Point>{ Point(20, 10), Point(30, 50) }, 0x00FF00);
-    Ellipse el (Point(10, 20), 11, 25, 0x808000);
+    Ellipse el (Point(10, 20), 1, 1, 0x808000);
     
     GeometricScene s;
     
-    
-    s.AddItem(* new Point(p));
-    s.AddItem(* new Line(l));
-    s.AddItem(* new Polyline(pl));
+//
+//    s.AddItem(* new Point(p));
+//    s.AddItem(* new Line(l));
+//    s.AddItem(* new Polyline(pl));
     s.AddItem(* new Ellipse(el));
 
     LengthSumVisitor v;
