@@ -12,6 +12,27 @@ enum class SceneTypeId
     Ellipse
 };
 
+class Curve;
+class Line;
+class Polyline;
+class Ellipse;
+class Point;
+
+
+class Visitor
+{
+public:
+    virtual void Visit(Point& p) = 0;
+    
+    virtual void Visit(Line& l) = 0;
+    
+    virtual void Visit(Curve& c) = 0;
+    
+    virtual void Visit(Ellipse& el) = 0;
+    
+    virtual void Visit(Polyline& pl) = 0;
+};
+
 
 class SceneElement {
 public:
@@ -23,6 +44,8 @@ public:
     
     virtual SceneTypeId TypeId() const = 0;
     
+    virtual void Accept(Visitor& v) = 0;
+    
     virtual ~SceneElement() = default;
 };
 
@@ -32,6 +55,7 @@ private:
     double x;
     double y;
     uint32_t color;
+    
 public:
     Point()
     : x(0.0)
@@ -56,6 +80,11 @@ public:
     , y(b)
     , color(0x0000FF)
     {};
+    
+    virtual void Accept(Visitor& v) override
+    {
+        v.Visit(*this);
+    }
     
     void Scale(float n)
     {
@@ -172,6 +201,27 @@ public:
     , color(c)
     {};
     
+    Line(Point a, Point b)
+    : start(a)
+    , end(b)
+    , color(0x0000FF)
+    {};
+    
+    Point GetPointStart() const
+    {
+        return start;
+    }
+    
+    Point GetPointEnd() const
+    {
+        return end;
+    }
+    
+    virtual void Accept(Visitor& v) override
+    {
+        v.Visit(*this);
+    }
+    
     SceneTypeId TypeId () const override
     {
         return SceneTypeId::Line;
@@ -258,6 +308,21 @@ public:
     , color(c)
     {};
 
+    size_t GetPointsCount() const
+    {
+        return points.size();
+    }
+    
+    Point GetPoint(size_t index) const
+    {
+        return points[index];
+    }
+    
+    virtual void Accept(Visitor& v) override
+    {
+        v.Visit(*this);
+    }
+    
     SceneTypeId TypeId () const override
     {
         return SceneTypeId::Polyline;
@@ -272,7 +337,7 @@ public:
     {
         return 0.0;
     }
-
+    
     Point CalcFormula(double t) const override
     {
         return Point();
@@ -299,7 +364,6 @@ public:
     void ReadForScene (std::istream& in) override
     {
         int size = 0;
-        char skip;
         Point p;
         in >> size;
         for (int i = 0; i < size; ++i)
@@ -363,6 +427,26 @@ public:
     , color(c)
     {};
 
+    double GetA()
+    {
+        return a;
+    }
+    
+    double GetB()
+    {
+        return b;
+    }
+    
+    Point GetCenter()
+    {
+        return c;
+    }
+    
+    virtual void Accept(Visitor& v) override
+    {
+        v.Visit(*this);
+    }
+    
     SceneTypeId TypeId () const override
     {
         return SceneTypeId::Ellipse;
@@ -530,11 +614,47 @@ public:
 };
 
 
+struct LengthSumVisitor : public Visitor
+{
+    double total_length { 0 };
+    
+    void Visit(Point &p) override {}
+    
+    void Visit(Curve &c) override {}
+    
+    void Visit(Line &l) override
+    {
+        total_length += std::hypot(l.GetPointStart().GetX() - l.GetPointEnd().GetX(),
+                                   l.GetPointStart().GetY() - l.GetPointEnd().GetY());
+    }
+    
+    void Visit(Ellipse &el) override
+    {
+        Point p;
+        const double delta_t = el.GetTmax() - el.GetTmin() / 100;
+        for(double t = el.GetTmin(); t < el.GetTmax(); t += delta_t)
+        {
+            p = el.CalcFormula(t);
+            total_length += std::hypot(p.GetX() - (p.GetX() + delta_t), p.GetY() - (p.GetY() + delta_t));
+        }
+    }
+    
+    void Visit(Polyline &pl) override
+    {
+        for(int i = 0; i < pl.GetPointsCount() - 1; ++i)
+        {
+            total_length += std::hypot(pl.GetPoint(i).GetX() - pl.GetPoint(i + 1).GetX(),
+                                       pl.GetPoint(i).GetY() - pl.GetPoint(i + 1).GetY());
+        }
+    }
+};
+
+
 int main(int argc, char* argv[])
 {
     Point p (10, 10, 0x808000);
     Line l (Point(20, 10), Point(30, 50), 0x0000FF);
-    Polyline pl (std::vector<Point>{ Point(20, 10), Point(30, 50), Point(30, 60) }, 0x00FF00);
+    Polyline pl (std::vector<Point>{ Point(20, 10), Point(30, 50) }, 0x00FF00);
     Ellipse el (Point(10, 20), 11, 25, 0x808000);
     
     GeometricScene s;
@@ -544,23 +664,26 @@ int main(int argc, char* argv[])
     s.AddItem(* new Line(l));
     s.AddItem(* new Polyline(pl));
     s.AddItem(* new Ellipse(el));
+
+    LengthSumVisitor v;
+
+    for (s.First(); !s.IsDone(); s.Next())
+    {
+        s.Iterator()->Accept(v);
+    }
+    
+    std::cout << v.total_length << std::endl;
+    
+//    std::stringstream ss;
+//    s.Write(std::cout);
+//    s.Write(ss);
+//    std::cout << std::endl;
+//    std::cout << ss.str() << std::endl;
 //
-//    for (s.First(); !s.IsDone(); s.Next())
-//    {
-//        s.Iterator()->Write(std::cout);
-//        std::cout << std::endl;
-//    }
-    
-    std::stringstream ss;
-    s.Write(std::cout);
-    s.Write(ss);
-    std::cout << std::endl;
-    std::cout << ss.str() << std::endl;
-    
-    GeometricScene s1;
-    s1.Read(ss);
-    s1.Write(std::cout);
-    std::cout << std::endl;
+//    GeometricScene s1;
+//    s1.Read(ss);
+//    s1.Write(std::cout);
+//    std::cout << std::endl;
     
     return 0;
 }
