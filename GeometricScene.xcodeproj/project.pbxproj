@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		5536E4AC29D2D72B002E34AD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5536E4AB29D2D72B002E34AD /* main.cpp */; };
+		5562FCED29EE601D0000D797 /* GeometricScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5562FCEB29EE601D0000D797 /* GeometricScene.cpp */; };
+		5562FCF329EE60B60000D797 /* LengthSumVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5562FCF129EE60B60000D797 /* LengthSumVisitor.cpp */; };
+		5562FCF629EE7A0F0000D797 /* SceneElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5562FCF429EE7A0F0000D797 /* SceneElement.cpp */; };
+		55E9B07529EE874900A34E5E /* Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55E9B07329EE874900A34E5E /* Shape.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +29,14 @@
 /* Begin PBXFileReference section */
 		5536E4A829D2D72B002E34AD /* GeometricScene */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GeometricScene; sourceTree = BUILT_PRODUCTS_DIR; };
 		5536E4AB29D2D72B002E34AD /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5562FCEB29EE601D0000D797 /* GeometricScene.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GeometricScene.cpp; sourceTree = "<group>"; };
+		5562FCEC29EE601D0000D797 /* GeometricScene.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GeometricScene.hpp; sourceTree = "<group>"; };
+		5562FCF129EE60B60000D797 /* LengthSumVisitor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LengthSumVisitor.cpp; sourceTree = "<group>"; };
+		5562FCF229EE60B60000D797 /* LengthSumVisitor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LengthSumVisitor.hpp; sourceTree = "<group>"; };
+		5562FCF429EE7A0F0000D797 /* SceneElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneElement.cpp; sourceTree = "<group>"; };
+		5562FCF529EE7A0F0000D797 /* SceneElement.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SceneElement.hpp; sourceTree = "<group>"; };
+		55E9B07329EE874900A34E5E /* Shape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shape.cpp; sourceTree = "<group>"; };
+		55E9B07429EE874900A34E5E /* Shape.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shape.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +70,14 @@
 			isa = PBXGroup;
 			children = (
 				5536E4AB29D2D72B002E34AD /* main.cpp */,
+				5562FCF129EE60B60000D797 /* LengthSumVisitor.cpp */,
+				5562FCF229EE60B60000D797 /* LengthSumVisitor.hpp */,
+				5562FCEB29EE601D0000D797 /* GeometricScene.cpp */,
+				5562FCEC29EE601D0000D797 /* GeometricScene.hpp */,
+				5562FCF429EE7A0F0000D797 /* SceneElement.cpp */,
+				5562FCF529EE7A0F0000D797 /* SceneElement.hpp */,
+				55E9B07329EE874900A34E5E /* Shape.cpp */,
+				55E9B07429EE874900A34E5E /* Shape.hpp */,
 			);
 			path = GeometricScene;
 			sourceTree = "<group>";
@@ -89,7 +109,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					5536E4A729D2D72B002E34AD = {
 						CreatedOnToolsVersion = 14.2;
@@ -119,6 +139,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5562FCF329EE60B60000D797 /* LengthSumVisitor.cpp in Sources */,
+				5562FCF629EE7A0F0000D797 /* SceneElement.cpp in Sources */,
+				55E9B07529EE874900A34E5E /* Shape.cpp in Sources */,
+				5562FCED29EE601D0000D797 /* GeometricScene.cpp in Sources */,
 				5536E4AC29D2D72B002E34AD /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -159,6 +183,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -217,6 +242,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -239,6 +265,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = J5G8JJCNY3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -249,6 +276,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = J5G8JJCNY3;
 				ENABLE_HARDENED_RUNTIME = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
