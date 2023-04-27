@@ -17,10 +17,10 @@ int main(int argc, char* argv[])
     
     GeometricScene s;
     
-//
-//    s.AddItem(* new Point(p));
-//    s.AddItem(* new Line(l));
-//    s.AddItem(* new Polyline(pl));
+
+   s.AddItem(* new Point(p));
+   s.AddItem(* new Line(l));
+   s.AddItem(* new Polyline(pl));
     s.AddItem(* new Ellipse(el));
 
     LengthSumVisitor v;
@@ -32,16 +32,16 @@ int main(int argc, char* argv[])
     
     std::cout << v.total_length << std::endl;
     
-//    std::stringstream ss;
-//    s.Write(std::cout);
-//    s.Write(ss);
-//    std::cout << std::endl;
-//    std::cout << ss.str() << std::endl;
-//
-//    GeometricScene s1;
-//    s1.Read(ss);
-//    s1.Write(std::cout);
-//    std::cout << std::endl;
+   std::stringstream ss;
+   s.Write(std::cout);
+   s.Write(ss);
+   std::cout << std::endl;
+   std::cout << ss.str() << std::endl;
+
+   GeometricScene s1;
+   s1.Read(ss);
+   s1.Write(std::cout);
+   std::cout << std::endl;
     
     return 0;
 }
