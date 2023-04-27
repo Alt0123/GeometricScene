@@ -37,7 +37,7 @@
 		5562FCF529EE7A0F0000D797 /* SceneElement.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SceneElement.hpp; sourceTree = "<group>"; };
 		55E9B07329EE874900A34E5E /* Shape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Shape.cpp; sourceTree = "<group>"; };
 		55E9B07429EE874900A34E5E /* Shape.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Shape.hpp; sourceTree = "<group>"; };
-		55ED16B629FA3DAD0047C544 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		55ED16B729FA4C5F0047C544 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +54,6 @@
 		5536E49F29D2D72B002E34AD = {
 			isa = PBXGroup;
 			children = (
-				55ED16B629FA3DAD0047C544 /* CMakeLists.txt */,
 				5536E4AA29D2D72B002E34AD /* GeometricScene */,
 				5536E4A929D2D72B002E34AD /* Products */,
 			);
@@ -71,6 +70,7 @@
 		5536E4AA29D2D72B002E34AD /* GeometricScene */ = {
 			isa = PBXGroup;
 			children = (
+				55ED16B729FA4C5F0047C544 /* CMakeLists.txt */,
 				5536E4AB29D2D72B002E34AD /* main.cpp */,
 				5562FCF129EE60B60000D797 /* LengthSumVisitor.cpp */,
 				5562FCF229EE60B60000D797 /* LengthSumVisitor.hpp */,
