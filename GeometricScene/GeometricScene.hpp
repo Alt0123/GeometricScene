@@ -6,11 +6,12 @@
 
 #include "SceneElement.hpp"
 #include "Shape.hpp"
-
 class GeometricScene {
 private:
     std::vector<std::shared_ptr<SceneElement>> items;
     int index { 0 };
+    using iterator = std::vector<std::shared_ptr<SceneElement>>::iterator;
+    
     
 public:
     void AddItem(SceneElement& it);
@@ -31,5 +32,9 @@ public:
     bool Next();
         
     bool IsDone();
+    
+    iterator begin(){ return items.begin();}
+    
+    iterator end(){ return items.end();}
 };
 #endif /* GeometricScene_hpp */
