@@ -33,6 +33,8 @@ public:
     
     void SetY(double _y);
     
+    uint32_t GetColor() override { return color; }
+    
     void Write (std::ostream& out) const override;
     
     void Read (std::istream& in) override;
@@ -60,6 +62,8 @@ public:
     virtual double GetTmax() const = 0;
 
     virtual Point CalcFormula(double t) const = 0;
+    
+    uint32_t GetColor() override { return 0;}
 };
 
 
@@ -89,6 +93,8 @@ public:
     double GetTmin() const override;
 
     double GetTmax() const override;
+    
+    uint32_t GetColor() override { return color;}
 
     Point CalcFormula(double t) const override;
 
@@ -136,6 +142,8 @@ public:
 
     double GetTmax() const override;
     
+    uint32_t GetColor() override { return color;}
+    
     Point CalcFormula(double t) const override;
 
     void Scale(double n);
@@ -180,6 +188,8 @@ public:
     double GetTmin() const override;
 
     double GetTmax() const override;
+    
+    uint32_t GetColor() override { return color;}
 
     Point CalcFormula(double t) const override;
     
