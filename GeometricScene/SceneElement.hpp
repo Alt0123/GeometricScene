@@ -24,6 +24,8 @@ public:
     
     virtual SceneTypeId TypeId() const = 0;
     
+    virtual uint32_t GetColor() = 0;
+    
     virtual void Accept(Visitor& v) = 0;
     
     virtual ~SceneElement() = default;
